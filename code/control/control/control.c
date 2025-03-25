@@ -15,6 +15,8 @@ uint32 g_control_output_sav_flag = 0;
 uint32 g_control_output_sv_flag = 0;
 uint32 g_control_output_sa_flag = 0;
 
+float g_mechine_mid_angle = 0.0f;
+
 struct Control_Turn_Manual_Params g_control_turn_manual_params;
 struct Control_Target g_control_target;
 struct Control_Flag g_control_flag;
@@ -172,19 +174,16 @@ void control_side_balance(
     struct Control_Turn_Manual_Params* control_turn_params,
     struct Velocity_Motor* vel_motor,
     struct EulerAngle* euler_angle_bias) {
-    if (control_flag->sideVelocity) {
-        control_flag->sideVelocity = 0;
-        control_side_velocity(vel_motor, control_target, control_turn_params);
-    }
-
+    // 角度外环
     if (control_flag->sideAngle) {
         control_flag->sideAngle = 0;
         control_side_angle(euler_angle_bias, control_target);
     }
 
-    if (control_flag->sideAngleVelocity) {
-        control_flag->sideAngleVelocity = 0;
-        control_side_angle_velocity(control_target);
+    // 速度内环，控制电机转速
+    if (control_flag->sideVelocity) {
+        control_flag->sideVelocity = 0;
+        control_side_velocity(vel_motor, control_target, control_turn_params);
     }
 
     // turnControl();
@@ -208,36 +207,36 @@ static void control_side_velocity(
     // momentumVelocityFilter =
     //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
 
-    control_target->sideAngle = (float)PID_calc_Position(
-        &side_velocity_PID,
-        (float)(vel_motor->momentumFront - vel_motor->momentumBack), 0.0f);
+    float err =
+        (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0;
+
+    s_side_balance_duty = (float)PID_calc_Position(
+        &side_velocity_PID, err, control_target->sideVelocity);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0) {
-        printf("%f,%f,%f,%f\n",
-               -(float)(vel_motor->momentumFront - vel_motor->momentumBack),
-               control_target->sideAngle,
-               (float)(vel_motor->momentumFront - vel_motor->momentumBack),
-               0.0f);
+        printf(
+            "%f,%f,%f,%f\n",
+            control_target->sideVelocity -
+                (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2,
+            s_side_balance_duty,
+            (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2,
+            control_target->sideVelocity);
     }
 }
 
 static void control_side_angle(struct EulerAngle* euler_angle_bias,
                                struct Control_Target* control_target) {
-    static float momentumAngleFilter[2] = {0};  // 角度滤波
-    momentumAngleFilter[1] = momentumAngleFilter[0];
-    momentumAngleFilter[0] = currentSideAngle;
-    // noiseFilter(momentumAngleFilter[0],0.02f);
-    // lowPassFilter(&momentumAngleFilter[0],&momentumAngleFilter[1],0.1f);
-    control_target->sideAngleVelocity = PID_calc_Position(
-        &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
-        control_target->sideAngle);
+    float err = g_mechine_mid_angle - currentSideAngle - euler_angle_bias->roll;
+
+    // 需求转速
+    control_target->sideVelocity =
+        PID_calc_Position(&side_angle_PID, err, g_mechine_mid_angle);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0) {
-        printf("%f,%f,%f,%f\n", (control_target->sideAngle - currentSideAngle),
-               control_target->sideAngleVelocity, currentSideAngle,
-               control_target->sideAngle);
+        printf("%f,%f,%f,%f\n", err, control_target->sideVelocity,
+               currentSideAngle - euler_angle_bias->roll, g_mechine_mid_angle);
     }
 }
 
@@ -303,11 +302,12 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->side_angle_velocity_parameter, 1,
                        MOMENTUM_MOTOR_PWM_MAX, 9999);
     control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 10, 9999,
+                       control_motion_params->side_angle_parameter, 1,
+                       9999,  // 修改了增益参数，有需要再改回来
                        3.0f);
     control_param_init(&side_velocity_PID,
-                       control_motion_params->side_velocity_parameter, 100,
-                       9999, 1.5f);
+                       control_motion_params->side_velocity_parameter, 1, 9999,
+                       1.5f);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
                        5);

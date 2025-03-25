@@ -48,6 +48,7 @@ struct Control_Target {
     //  float sideVelocity;
     float sideAngle;
     float sideAngleVelocity;
+    float sideVelocity;
     // turn
     float bucking;   // balance bucking
     float Fbucking;  // front balance bucking
@@ -90,8 +91,9 @@ extern uint8 g_turn_start_flag;
 extern int32 g_control_shutdown_flag;
 extern uint32 g_control_bottom_flag;
 extern uint32 g_control_output_sav_flag;
-extern uint32 g_control_output_sv_flag ;
-extern uint32 g_control_output_sa_flag ;
+extern uint32 g_control_output_sv_flag;
+extern uint32 g_control_output_sa_flag;
+extern float g_mechine_mid_angle;
 
 extern struct Control_Turn_Manual_Params g_control_turn_manual_params;
 extern struct Control_Target g_control_target;
