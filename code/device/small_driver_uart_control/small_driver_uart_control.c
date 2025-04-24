@@ -111,38 +111,7 @@ void small_driver_set_duty(int16 left_duty, int16 right_duty) {
 
     motor_value.send_data_buffer[1] = 0X01;  // 配置功能字
 
-    // motor_value.send_data_buffer[2] = 0; // 单驱左电机默认为 0
-
-    // motor_value.send_data_buffer[3] = 0; // 单驱左电机默认为 0
-
-    // motor_value.send_data_buffer[2] = 0; // 单驱右电机默认为 0 反板备用
-
-    // motor_value.send_data_buffer[3] = 0; // 单驱右电机默认为 0 反板备用
-
     // TODO: 修改单驱消息发送规则
-
-    motor_value.send_data_buffer[2] =
-        (uint8)((left_duty & 0xFF00) >>
-                8);  // 拆分 左侧占空比 的高八位 反板备用
-
-    motor_value.send_data_buffer[3] =
-        (uint8)(left_duty & 0x00FF);  // 拆分 左侧占空比 的低八位 反板备用
-
-    motor_value.send_data_buffer[4] =
-        (uint8)((right_duty & 0xFF00) >> 8);  // 拆分 右侧占空比 的高八位
-
-    motor_value.send_data_buffer[5] =
-        (uint8)(right_duty & 0x00FF);  // 拆分 右侧占空比 的低八位
-
-    motor_value.send_data_buffer[6] = 0;  // 和校验清除
-
-    for (int i = 0; i < 6; i++) {
-        motor_value.send_data_buffer[6] +=
-            motor_value.send_data_buffer[i];  // 计算校验位
-    }
-
-    uart_write_buffer(SMALL_DRIVER_UART_LEFT, motor_value.send_data_buffer,
-                      7);  // 发送设置占空比的 字节包 数据
 
     motor_value.send_data_buffer[2] =
         (uint8)((right_duty & 0xFF00) >>
@@ -151,21 +120,32 @@ void small_driver_set_duty(int16 left_duty, int16 right_duty) {
     motor_value.send_data_buffer[3] =
         (uint8)(right_duty & 0x00FF);  // 拆分 左侧占空比 的低八位 反板备用
 
-    motor_value.send_data_buffer[4] =
-        (uint8)((left_duty & 0xFF00) >> 8);  // 拆分 右侧占空比 的高八位
+    motor_value.send_data_buffer[4] = 0;  // 和校验清除
 
-    motor_value.send_data_buffer[5] =
-        (uint8)(left_duty & 0x00FF);  // 拆分 右侧占空比 的低八位
+    for (int i = 0; i < 4; i++) {
+        motor_value.send_data_buffer[4] +=
+            motor_value.send_data_buffer[i];  // 计算校验位
+    }
 
-    motor_value.send_data_buffer[6] = 0;  // 和校验清除
+    uart_write_buffer(SMALL_DRIVER_UART_LEFT, motor_value.send_data_buffer,
+                      5);  // 发送设置占空比的 字节包 数据
 
-    for (int i = 0; i < 6; i++) {
-        motor_value.send_data_buffer[6] +=
+    motor_value.send_data_buffer[2] =
+        (uint8)((left_duty & 0xFF00) >>
+                8);  // 拆分 左侧占空比 的高八位 反板备用
+
+    motor_value.send_data_buffer[3] =
+        (uint8)(left_duty & 0x00FF);  // 拆分 左侧占空比 的低八位 反板备用
+
+    motor_value.send_data_buffer[4] = 0;  // 和校验清除
+
+    for (int i = 0; i < 4; i++) {
+        motor_value.send_data_buffer[4] +=
             motor_value.send_data_buffer[i];  // 计算校验位
     }
 
     uart_write_buffer(SMALL_DRIVER_UART_RIGHT, motor_value.send_data_buffer,
-                      7);  // 发送设置占空比的 字节包 数据
+                      5);  // 发送设置占空比的 字节包 数据
 }
 
 //-------------------------------------------------------------------------------------------------------------------

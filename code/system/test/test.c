@@ -8,6 +8,9 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
+#define IMG_SIZE_W MT9V03X_W / 2
+#define IMG_SIZE_H MT9V03X_H / 2
+
 void test_bottom_motor() {
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: forward");
@@ -212,4 +215,30 @@ void test_noise() {
         system_delay_ms(100);
     }
     lcd_clear();
+}
+
+void test_camera() {
+    lcd_clear();
+    while (keymsg.key != KEY_L) {
+        if (mt9v03x_finish_flag) {
+            mt9v03x_finish_flag = 0;
+            // edge_detect_dynamic(mt9v03x_image, edge_map, &edge_cfg);
+            tft180_show_gray_image(0, 0, mt9v03x_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+            tft180_show_gray_image(tft180_width_max - IMG_SIZE_W, 0,
+                                   mt9v03x_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+        }
+        if (mt9v03x2_finish_flag) {
+            mt9v03x2_finish_flag = 0;
+            // edge_detect_dynamic(mt9v03x2_image, edge_map2, &edge_cfg);
+            tft180_show_gray_image(0, tft180_height_max - IMG_SIZE_H,
+                                   mt9v03x2_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+            tft180_show_gray_image(tft180_width_max - IMG_SIZE_W,
+                                   tft180_height_max - IMG_SIZE_H,
+                                   mt9v03x2_image, MT9V03X2_W, MT9V03X2_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+        }
+    }
 }

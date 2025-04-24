@@ -306,7 +306,7 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->side_angle_velocity_parameter, 1,
                        MOMENTUM_MOTOR_PWM_MAX, 9999);
     control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 1000, 9999,
+                       control_motion_params->side_angle_parameter, 10, 9999,
                        3.0f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter, 1, 9999,

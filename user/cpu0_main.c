@@ -53,6 +53,9 @@ int core0_main(void) {
     // 此处编写用户代码 例如外设初始化代码等
 
     motor_init();
+    // 串口初始化放到这里不知道会不会好点
+    small_driver_uart_init();
+    printf("small_driver_uart_init\n");
 
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();  // 等待所有核心初始化完毕

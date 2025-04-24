@@ -13,9 +13,6 @@ RunState_t runState;
 void system_init() {
     // uart_init(UART_2, 115200, UART2_TX_P10_5, UART2_RX_P10_6);
 
-    // init small driver uart
-    small_driver_uart_init();
-    printf("small_driver_uart_init\n");
     // init motor
     // motor_init();
     // printf("motor_init\n");
@@ -25,6 +22,9 @@ void system_init() {
 
     // init lcd
     lcd_init();
+
+    mt9v03x_init();
+    mt9v03x2_init();
 
     // init key
     key_init_rewrite(KEY_MAX);

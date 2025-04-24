@@ -7,5 +7,6 @@ void test_side_motor();
 void test_attitude();
 void test_imu();
 void test_noise();
+void test_camera();
 
 #endif

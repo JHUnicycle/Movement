@@ -1,12 +1,13 @@
 /*********************************************************************************************************************
- * TC377 Opensourec Library 即（TC377 开源库）是一个基于官方 SDK 接口的第三方开源库
- * Copyright (c) 2022 SEEKFREE 逐飞科技
+ * TC377 Opensourec Library 即（TC377 开源库）是一个基于官方 SDK
+ *接口的第三方开源库 Copyright (c) 2022 SEEKFREE 逐飞科技
  *
  * 本文件是 TC377 开源库的一部分
  *
  * TC377 开源库 是免费软件
- * 您可以根据自由软件基金会发布的 GPL（GNU General Public License，即 GNU通用公共许可证）的条款
- * 即 GPL 的第3版（即 GPL3.0）或（您选择的）任何后来的版本，重新发布和/或修改它
+ * 您可以根据自由软件基金会发布的 GPL（GNU General Public License，即
+ *GNU通用公共许可证）的条款 即 GPL 的第3版（即
+ *GPL3.0）或（您选择的）任何后来的版本，重新发布和/或修改它
  *
  * 本开源库的发布是希望它能发挥作用，但并未对其作任何的保证
  * 甚至没有隐含的适销性或适合特定用途的保证
@@ -17,8 +18,8 @@
  *
  * 额外注明：
  * 本开源库使用 GPL3.0 开源许可证协议 以上许可申明为译文版本
- * 许可申明英文版在 libraries/doc 文件夹下的 GPL3_permission_statement.txt 文件中
- * 许可证副本在 libraries 文件夹下 即该文件夹下的 LICENSE 文件
+ * 许可申明英文版在 libraries/doc 文件夹下的 GPL3_permission_statement.txt
+ *文件中 许可证副本在 libraries 文件夹下 即该文件夹下的 LICENSE 文件
  * 欢迎各位使用并传播本程序 但修改内容时必须保留逐飞科技的版权声明（即本声明）
  *
  * 文件名称          isr_config
@@ -45,15 +46,23 @@
 //======================================================特别注意====================================================
 // 中断优先级不能设置为相同值，所有中断优先级都必须设置为不一样的值
 //======================================================特别注意====================================================
-// ISR_PRIORITY： TC377具有255个中断优先级可以设置 1-255，0优先级表示不开启中断，255为最高优先级
+// ISR_PRIORITY： TC377具有255个中断优先级可以设置
+// 1-255，0优先级表示不开启中断，255为最高优先级
 
-// INT_SERVICE：    宏定义决定中断由谁处理，也称为服务提供者（在TC377中，中断被叫做服务），可设置范围IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_cpu2 IfxSrc_Tos_dma  不可设置为其他值
+// INT_SERVICE：
+// 宏定义决定中断由谁处理，也称为服务提供者（在TC377中，中断被叫做服务），可设置范围IfxSrc_Tos_cpu0
+// IfxSrc_Tos_cpu1 IfxSrc_Tos_cpu2 IfxSrc_Tos_dma  不可设置为其他值
 
 // 如果INT_SERVICE设置为IfxSrc_Tos_dma的话，ISR_PRIORITY的可设置范围则是0-127。
 
 //================================================PIT中断参数相关定义===============================================
-#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu0 // 定义CCU6_0 PIT通道0中断服务类型，即中断是由谁响应处理 IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma  不可设置为其他值
-#define CCU6_0_CH0_ISR_PRIORITY 50             // 定义CCU6_0 PIT通道0中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
+#define CCU6_0_CH0_INT_SERVICE \
+    IfxSrc_Tos_cpu0  // 定义CCU6_0 PIT通道0中断服务类型，即中断是由谁响应处理
+                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                     // 不可设置为其他值
+#define CCU6_0_CH0_ISR_PRIORITY \
+    50  // 定义CCU6_0 PIT通道0中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
 
 #define CCU6_0_CH1_INT_SERVICE IfxSrc_Tos_cpu0
 #define CCU6_0_CH1_ISR_PRIORITY 51
@@ -66,30 +75,61 @@
 
 //================================================GPIO中断参数相关定义===============================================
 // 通道0与通道4是公用一个中断函数 在中断内部通过标志位判断是谁触发的中断
-#define EXTI_CH0_CH4_INT_SERVICE IfxSrc_Tos_cpu0 // 定义ERU通道0和通道4中断服务类型，即中断是由谁响应处理 IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma  不可设置为其他值
-#define EXTI_CH0_CH4_INT_PRIO 60                 // 定义ERU通道0和通道4中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
+#define EXTI_CH0_CH4_INT_SERVICE \
+    IfxSrc_Tos_dma  // 定义ERU通道0和通道4中断服务类型，即中断是由谁响应处理
+                    // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                    // 不可设置为其他值
+#define EXTI_CH0_CH4_INT_PRIO \
+    7  // 定义ERU通道0和通道4中断优先级 可设置范围为0-127(DMA响应)
 
 // 通道1与通道5是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
-#define EXTI_CH1_CH5_INT_SERVICE IfxSrc_Tos_cpu0 // 定义ERU通道1和通道5中断服务类型，同上
-#define EXTI_CH1_CH5_INT_PRIO 61                 // 定义ERU通道1和通道5中断优先级 同上
+#define EXTI_CH1_CH5_INT_SERVICE \
+    IfxSrc_Tos_cpu0               // 定义ERU通道1和通道5中断服务类型，同上
+#define EXTI_CH1_CH5_INT_PRIO 60  // 定义ERU通道1和通道5中断优先级 同上
 
 // 通道2与通道6是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
-#define EXTI_CH2_CH6_INT_SERVICE IfxSrc_Tos_dma // 定义ERU通道2和通道6中断服务类型，同上
-#define EXTI_CH2_CH6_INT_PRIO 5                 // 定义ERU通道2和通道6中断优先级 可设置范围为0-127(DMA响应)
+#define EXTI_CH2_CH6_INT_SERVICE \
+    IfxSrc_Tos_cpu0  // 定义ERU通道2和通道6中断服务类型，同上
+#define EXTI_CH2_CH6_INT_PRIO \
+    61  // 定义ERU通道2和通道6中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
 
 // 通道3与通道7是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
-#define EXTI_CH3_CH7_INT_SERVICE IfxSrc_Tos_cpu0 // 定义ERU通道3和通道7中断服务类型，同上
-#define EXTI_CH3_CH7_INT_PRIO 62                 // 定义ERU通道3和通道7中断优先级 同上
+#define EXTI_CH3_CH7_INT_SERVICE \
+    IfxSrc_Tos_dma               // 定义ERU通道3和通道7中断服务类型，同上
+#define EXTI_CH3_CH7_INT_PRIO 6  // 定义ERU通道3和通道7中断优先级 同上
 
 //===================================================DMA中断参数相关定义===============================================
-#define DMA_INT_SERVICE IfxSrc_Tos_cpu0 // ERU触发DMA中断服务类型，即中断是由谁响应处理 IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma  不可设置为其他值
-#define DMA_INT_PRIO 70                 // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
+#define DMA_INT_SERVICE \
+    IfxSrc_Tos_cpu0  // ERU触发DMA中断服务类型，即中断是由谁响应处理
+                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                     // 不可设置为其他值
+#define DMA_INT_PRIO \
+    70  // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
+
+#define DMA_INT_SERVICE_2 \
+    IfxSrc_Tos_cpu0  // ERU触发DMA中断服务类型，即中断是由谁响应处理
+                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                     // 不可设置为其他值
+#define DMA_INT_PRIO_2 \
+    71  // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
 
 //===================================================串口中断参数相关定义===============================================
-#define UART0_INT_SERVICE IfxSrc_Tos_cpu0 // 定义串口0中断服务类型，即中断是由谁响应处理 IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma  不可设置为其他值
-#define UART0_TX_INT_PRIO 11              // 定义串口0发送中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
-#define UART0_RX_INT_PRIO 10              // 定义串口0接收中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
-#define UART0_ER_INT_PRIO 12              // 定义串口0错误中断优先级 优先级范围1-255 越大优先级越高 与平时使用的单片机不一样
+#define UART0_INT_SERVICE \
+    IfxSrc_Tos_cpu0  // 定义串口0中断服务类型，即中断是由谁响应处理
+                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                     // 不可设置为其他值
+#define UART0_TX_INT_PRIO \
+    11  // 定义串口0发送中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
+#define UART0_RX_INT_PRIO \
+    10  // 定义串口0接收中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
+#define UART0_ER_INT_PRIO \
+    12  // 定义串口0错误中断优先级 优先级范围1-255 越大优先级越高
+        // 与平时使用的单片机不一样
 
 #define UART1_INT_SERVICE IfxSrc_Tos_cpu0
 #define UART1_TX_INT_PRIO 13
@@ -142,28 +182,70 @@
 #define UART11_ER_INT_PRIO 42
 
 //------------中断向量表选择（不允许修改）------------
-#define CCU6_0_CH0_INT_VECTAB_NUM (int)CCU6_0_CH0_INT_SERVICE > 0 ? (int)CCU6_0_CH0_INT_SERVICE - 1 : (int)CCU6_0_CH0_INT_SERVICE
-#define CCU6_0_CH1_INT_VECTAB_NUM (int)CCU6_0_CH1_INT_SERVICE > 0 ? (int)CCU6_0_CH1_INT_SERVICE - 1 : (int)CCU6_0_CH1_INT_SERVICE
-#define CCU6_1_CH0_INT_VECTAB_NUM (int)CCU6_1_CH0_INT_SERVICE > 0 ? (int)CCU6_1_CH0_INT_SERVICE - 1 : (int)CCU6_1_CH0_INT_SERVICE
-#define CCU6_1_CH1_INT_VECTAB_NUM (int)CCU6_1_CH1_INT_SERVICE > 0 ? (int)CCU6_1_CH1_INT_SERVICE - 1 : (int)CCU6_1_CH1_INT_SERVICE
+#define CCU6_0_CH0_INT_VECTAB_NUM                                     \
+    (int)CCU6_0_CH0_INT_SERVICE > 0 ? (int)CCU6_0_CH0_INT_SERVICE - 1 \
+                                    : (int)CCU6_0_CH0_INT_SERVICE
+#define CCU6_0_CH1_INT_VECTAB_NUM                                     \
+    (int)CCU6_0_CH1_INT_SERVICE > 0 ? (int)CCU6_0_CH1_INT_SERVICE - 1 \
+                                    : (int)CCU6_0_CH1_INT_SERVICE
+#define CCU6_1_CH0_INT_VECTAB_NUM                                     \
+    (int)CCU6_1_CH0_INT_SERVICE > 0 ? (int)CCU6_1_CH0_INT_SERVICE - 1 \
+                                    : (int)CCU6_1_CH0_INT_SERVICE
+#define CCU6_1_CH1_INT_VECTAB_NUM                                     \
+    (int)CCU6_1_CH1_INT_SERVICE > 0 ? (int)CCU6_1_CH1_INT_SERVICE - 1 \
+                                    : (int)CCU6_1_CH1_INT_SERVICE
 
-#define EXTI_CH0_CH4_INT_VECTAB_NUM (int)EXTI_CH0_CH4_INT_SERVICE > 0 ? (int)EXTI_CH0_CH4_INT_SERVICE - 1 : (int)EXTI_CH0_CH4_INT_SERVICE
-#define EXTI_CH1_CH5_INT_VECTAB_NUM (int)EXTI_CH1_CH5_INT_SERVICE > 0 ? (int)EXTI_CH1_CH5_INT_SERVICE - 1 : (int)EXTI_CH1_CH5_INT_SERVICE
-#define EXTI_CH2_CH6_INT_VECTAB_NUM (int)EXTI_CH2_CH6_INT_SERVICE > 0 ? (int)EXTI_CH2_CH6_INT_SERVICE - 1 : (int)EXTI_CH2_CH6_INT_SERVICE
-#define EXTI_CH3_CH7_INT_VECTAB_NUM (int)EXTI_CH3_CH7_INT_SERVICE > 0 ? (int)EXTI_CH3_CH7_INT_SERVICE - 1 : (int)EXTI_CH3_CH7_INT_SERVICE
+#define EXTI_CH0_CH4_INT_VECTAB_NUM                                       \
+    (int)EXTI_CH0_CH4_INT_SERVICE > 0 ? (int)EXTI_CH0_CH4_INT_SERVICE - 1 \
+                                      : (int)EXTI_CH0_CH4_INT_SERVICE
+#define EXTI_CH1_CH5_INT_VECTAB_NUM                                       \
+    (int)EXTI_CH1_CH5_INT_SERVICE > 0 ? (int)EXTI_CH1_CH5_INT_SERVICE - 1 \
+                                      : (int)EXTI_CH1_CH5_INT_SERVICE
+#define EXTI_CH2_CH6_INT_VECTAB_NUM                                       \
+    (int)EXTI_CH2_CH6_INT_SERVICE > 0 ? (int)EXTI_CH2_CH6_INT_SERVICE - 1 \
+                                      : (int)EXTI_CH2_CH6_INT_SERVICE
+#define EXTI_CH3_CH7_INT_VECTAB_NUM                                       \
+    (int)EXTI_CH3_CH7_INT_SERVICE > 0 ? (int)EXTI_CH3_CH7_INT_SERVICE - 1 \
+                                      : (int)EXTI_CH3_CH7_INT_SERVICE
 
-#define DMA_INT_VECTAB_NUM (int)DMA_INT_SERVICE > 0 ? (int)DMA_INT_SERVICE - 1 : (int)DMA_INT_SERVICE
+#define DMA_INT_VECTAB_NUM \
+    (int)DMA_INT_SERVICE > 0 ? (int)DMA_INT_SERVICE - 1 : (int)DMA_INT_SERVICE
+#define DMA_INT_VECTAB_NUM_2                                \
+    (int)DMA_INT_SERVICE_2 > 0 ? (int)DMA_INT_SERVICE_2 - 1 \
+                               : (int)DMA_INT_SERVICE_2
 
-#define UART0_INT_VECTAB_NUM (int)UART0_INT_SERVICE > 0 ? (int)UART0_INT_SERVICE - 1 : (int)UART0_INT_SERVICE
-#define UART1_INT_VECTAB_NUM (int)UART1_INT_SERVICE > 0 ? (int)UART1_INT_SERVICE - 1 : (int)UART1_INT_SERVICE
-#define UART2_INT_VECTAB_NUM (int)UART2_INT_SERVICE > 0 ? (int)UART2_INT_SERVICE - 1 : (int)UART2_INT_SERVICE
-#define UART3_INT_VECTAB_NUM (int)UART3_INT_SERVICE > 0 ? (int)UART3_INT_SERVICE - 1 : (int)UART3_INT_SERVICE
-#define UART4_INT_VECTAB_NUM (int)UART4_INT_SERVICE > 0 ? (int)UART4_INT_SERVICE - 1 : (int)UART4_INT_SERVICE
-#define UART5_INT_VECTAB_NUM (int)UART5_INT_SERVICE > 0 ? (int)UART5_INT_SERVICE - 1 : (int)UART5_INT_SERVICE
-#define UART6_INT_VECTAB_NUM (int)UART6_INT_SERVICE > 0 ? (int)UART6_INT_SERVICE - 1 : (int)UART6_INT_SERVICE
-#define UART8_INT_VECTAB_NUM (int)UART8_INT_SERVICE > 0 ? (int)UART8_INT_SERVICE - 1 : (int)UART8_INT_SERVICE
-#define UART9_INT_VECTAB_NUM (int)UART9_INT_SERVICE > 0 ? (int)UART9_INT_SERVICE - 1 : (int)UART9_INT_SERVICE
-#define UART10_INT_VECTAB_NUM (int)UART10_INT_SERVICE > 0 ? (int)UART10_INT_SERVICE - 1 : (int)UART10_INT_SERVICE
-#define UART11_INT_VECTAB_NUM (int)UART11_INT_SERVICE > 0 ? (int)UART11_INT_SERVICE - 1 : (int)UART11_INT_SERVICE
+#define UART0_INT_VECTAB_NUM                                \
+    (int)UART0_INT_SERVICE > 0 ? (int)UART0_INT_SERVICE - 1 \
+                               : (int)UART0_INT_SERVICE
+#define UART1_INT_VECTAB_NUM                                \
+    (int)UART1_INT_SERVICE > 0 ? (int)UART1_INT_SERVICE - 1 \
+                               : (int)UART1_INT_SERVICE
+#define UART2_INT_VECTAB_NUM                                \
+    (int)UART2_INT_SERVICE > 0 ? (int)UART2_INT_SERVICE - 1 \
+                               : (int)UART2_INT_SERVICE
+#define UART3_INT_VECTAB_NUM                                \
+    (int)UART3_INT_SERVICE > 0 ? (int)UART3_INT_SERVICE - 1 \
+                               : (int)UART3_INT_SERVICE
+#define UART4_INT_VECTAB_NUM                                \
+    (int)UART4_INT_SERVICE > 0 ? (int)UART4_INT_SERVICE - 1 \
+                               : (int)UART4_INT_SERVICE
+#define UART5_INT_VECTAB_NUM                                \
+    (int)UART5_INT_SERVICE > 0 ? (int)UART5_INT_SERVICE - 1 \
+                               : (int)UART5_INT_SERVICE
+#define UART6_INT_VECTAB_NUM                                \
+    (int)UART6_INT_SERVICE > 0 ? (int)UART6_INT_SERVICE - 1 \
+                               : (int)UART6_INT_SERVICE
+#define UART8_INT_VECTAB_NUM                                \
+    (int)UART8_INT_SERVICE > 0 ? (int)UART8_INT_SERVICE - 1 \
+                               : (int)UART8_INT_SERVICE
+#define UART9_INT_VECTAB_NUM                                \
+    (int)UART9_INT_SERVICE > 0 ? (int)UART9_INT_SERVICE - 1 \
+                               : (int)UART9_INT_SERVICE
+#define UART10_INT_VECTAB_NUM                                 \
+    (int)UART10_INT_SERVICE > 0 ? (int)UART10_INT_SERVICE - 1 \
+                                : (int)UART10_INT_SERVICE
+#define UART11_INT_VECTAB_NUM                                 \
+    (int)UART11_INT_SERVICE > 0 ? (int)UART11_INT_SERVICE - 1 \
+                                : (int)UART11_INT_SERVICE
 
 #endif
