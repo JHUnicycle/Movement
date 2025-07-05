@@ -8,6 +8,8 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
+#include "diode.h"
+#include "switch.h"
 #include "receiver.h"
 
 RunState_t runState;
@@ -19,17 +21,19 @@ uint32 g_main_1_cnt = 0;
 void system_init()
 {
     // ===================== DEVICE ======================== //
-    clock_init(); // è·å–æ—¶é’Ÿé¢‘ç‡<åŠ¡å¿…ä¿ç•™>
-    debug_init(); // åˆå§‹åŒ–é»˜è®¤è°ƒè¯•ä¸²å£
+    clock_init(); // »ñÈ¡Ê±ÖÓÆµÂÊ<Îñ±Ø±£Áô>
+    debug_init(); // ³õÊ¼»¯Ä¬ÈÏµ÷ÊÔ´®¿Ú
     motor_init();
     small_driver_uart_init();
     encoder_init();
     lcd_init();
     mt9v03x_init();
-    imu_init();
     // mt9v03x2_init();
+    imu_init();
     // receiver_init();
     // wireless_init();
+    diode_init();
+    switch_init();
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
@@ -242,20 +246,20 @@ void turn_control_timer(struct Control_Time *control_time,
     //     control_flag->turn_angle = 0;
     // }
 
-    // æ§åˆ¶è½¬å‘
+    // ¿ØÖÆ×ªÏò
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
 {
-    // æ ¹æ®ä¸åŒçš„è½¦è¾†çŠ¶æ€æ‰§è¡Œä¸åŒçš„æ§åˆ¶æ“ä½œ
+    // ¸ù¾İ²»Í¬µÄ³µÁ¾×´Ì¬Ö´ĞĞ²»Í¬µÄ¿ØÖÆ²Ù×÷
     switch (state)
     {
     case CAR_STOP:
         runState = CAR_STOP;
 
-        pit_disable(CCU61_CH1); // å¤±èƒ½æ§åˆ¶ä¸­æ–­
-        pit_enable(CCU60_CH1);  // ä½¿èƒ½æŒ‰é”®ä¸­æ–­
+        pit_disable(CCU61_CH1); // Ê§ÄÜ¿ØÖÆÖĞ¶Ï
+        pit_enable(CCU60_CH1);  // Ê¹ÄÜ°´¼üÖĞ¶Ï
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -265,8 +269,8 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // pit_enable(CCU61_CH1);  // ä½¿èƒ½æ§åˆ¶ä¸­æ–­
-        pit_disable(CCU60_CH1); // å¤±èƒ½æŒ‰é”®ä¸­æ–­
+        // pit_enable(CCU61_CH1); // Ê¹ÄÜ¿ØÖÆÖĞ¶Ï
+        pit_disable(CCU60_CH1); // Ê§ÄÜ°´¼üÖĞ¶Ï
         break;
     }
 }

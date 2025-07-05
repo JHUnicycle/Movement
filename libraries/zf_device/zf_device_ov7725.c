@@ -328,7 +328,7 @@ static void ov7725_vsync_handler(void) {
         ov7725_link_list_num =
             dma_init(OV7725_DMA_CH, OV7725_DATA_ADD, ov7725_image_binary[0],
                      OV7725_PCLK_PIN, EXTI_TRIGGER_RISING, OV7725_IMAGE_SIZE,
-                     DMA_INT_PRIO);
+                     DMA_1_INT_PRIO);
         dma_enable(OV7725_DMA_CH);
     } else {
         if (ov7725_link_list_num == 1) {

@@ -463,7 +463,7 @@ static void scc8660_vsync_handler(void) {
         scc8660_link_list_num =
             dma_init(SCC8660_DMA_CH, SCC8660_DATA_ADD, (uint8*)scc8660_image[0],
                      SCC8660_PCLK_PIN, EXTI_TRIGGER_RISING, SCC8660_IMAGE_SIZE,
-                     DMA_INT_PRIO);
+                     DMA_1_INT_PRIO);
         dma_enable(SCC8660_DMA_CH);
     } else {
         if (1 == scc8660_link_list_num) {

@@ -13,11 +13,12 @@
 #include "receiver.h"
 #include "detection.h"
 #include "distance.h"
+#include "diode.h"
 #include "YawIntegral.h"
 
-// 定义静态变量，从栈移到数据段，避免栈溢出
+// 瀹氫箟闈欐�佸彉閲忥紝浠庢爤绉诲埌鏁版嵁娈碉紝閬垮厤鏍堟孩鍑�
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
-#define WIRELESS_BUFFER_SIZE 256 // 定义无线UART缓冲区大小
+#define WIRELESS_BUFFER_SIZE 256 // 瀹氫箟鏃犵嚎UART缂撳啿鍖哄ぇ灏�
 static uint8 s_wireless_uart_buffer[WIRELESS_BUFFER_SIZE];
 
 void test_bottom_motor()
@@ -28,12 +29,12 @@ void test_bottom_motor()
     lcd_show_string(0, 4, "Press KEY_L to exit");
     while (keymsg.key != KEY_L)
     {
-        if (keymsg.key == KEY_U) // 向前
+        if (keymsg.key == KEY_U) // 鍚戝墠
         {
             gpio_set_level(DIR_BOTTOM, 1);
             pwm_set_duty(MOTOR_BOTTOM, 10000);
         }
-        if (keymsg.key == KEY_D) // 向后
+        if (keymsg.key == KEY_D) // 鍚戝悗
         {
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
@@ -58,39 +59,39 @@ void test_side_motor()
     lcd_show_string(0, 3, "KEY_L:right backward");
     lcd_show_string(0, 4, "Release to stop");
     lcd_show_string(0, 5, "Press KEY_B to exit");
-    system_delay_ms(200); // 等待按键稳定
+    system_delay_ms(200); // 绛夊緟鎸夐敭绋冲畾
     while (keymsg.key != KEY_B)
     {
-        // 根据按键状态设置电机速度
-        if (keymsg.key == KEY_U) // 左电机向前
+        // 鏍规嵁鎸夐敭鐘舵�佽缃數鏈洪�熷害
+        if (keymsg.key == KEY_U) // 宸︾數鏈哄悜鍓�
         {
             small_driver_set_duty(2000, 0);
         }
-        else if (keymsg.key == KEY_D) // 左电机向后
+        else if (keymsg.key == KEY_D) // 宸︾數鏈哄悜鍚�
         {
             small_driver_set_duty(-2000, 0);
         }
-        else if (keymsg.key == KEY_R) // 右电机向前
+        else if (keymsg.key == KEY_R) // 鍙崇數鏈哄悜鍓�
         {
             small_driver_set_duty(0, 2000);
         }
-        else if (keymsg.key == KEY_L) // 右电机向后
+        else if (keymsg.key == KEY_L) // 鍙崇數鏈哄悜鍚�
         {
             small_driver_set_duty(0, -2000);
         }
-        else // 没有按键按下时停止电机
+        else // 娌℃湁鎸夐敭鎸変笅鏃跺仠姝㈢數鏈�
         {
             small_driver_set_duty(0, 0);
         }
 
-        // 显示电机状态
+        // 鏄剧ず鐢垫満鐘舵��
         lcd_show_string(0, 6, "Front:");
         lcd_show_int(8, 6, g_vel_motor.momentumFront, 5);
         lcd_show_string(0, 7, "Back:");
         lcd_show_int(8, 7, g_vel_motor.momentumBack, 5);
     }
 
-    // 退出前确保电机停止
+    // 閫�鍑哄墠纭繚鐢垫満鍋滄
     small_driver_set_duty(0, 0);
     lcd_clear();
 }
@@ -174,11 +175,11 @@ void test_noise()
     {
         if (cnt < T)
         {
-            // 读取传感器数据
+            // 璇诲彇浼犳劅鍣ㄦ暟鎹�
             imu660rb_get_acc();
             imu660rb_get_gyro();
 
-            // 实时计算并累加
+            // 瀹炴椂璁＄畻骞剁疮鍔�
             float current_ax =
                 imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
             float current_ay =
@@ -193,7 +194,7 @@ void test_noise()
             float current_gz =
                 imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
 
-            // 累加原始值和平方值
+            // 绱姞鍘熷鍊煎拰骞虫柟鍊�
             sum_ax += current_ax;
             sum_ax2 += current_ax * current_ax;
             sum_ay += current_ay;
@@ -210,7 +211,7 @@ void test_noise()
         }
         else
         {
-            // 计算均值
+            // 璁＄畻鍧囧��
             float mean_ax = sum_ax / total;
             float mean_ay = sum_ay / total;
             float mean_az = sum_az / total;
@@ -269,7 +270,7 @@ void test_side_deadzone()
 
     while (keymsg.key != KEY_L)
     {
-        // 测试前电机
+        // 娴嬭瘯鍓嶇數鏈�
         if (!front_done)
         {
             front_deadzone += 1;
@@ -283,7 +284,7 @@ void test_side_deadzone()
             }
         }
 
-        // 测试后电机
+        // 娴嬭瘯鍚庣數鏈�
         if (!back_done)
         {
             back_deadzone += 1;
@@ -297,13 +298,13 @@ void test_side_deadzone()
             }
         }
 
-        // 显示当前状态
+        // 鏄剧ず褰撳墠鐘舵��
         lcd_show_int(10, 1, front_deadzone, 5);
         lcd_show_int(10, 2, g_vel_motor.momentumFront, 5);
         lcd_show_int(10, 3, back_deadzone, 5);
         lcd_show_int(10, 4, g_vel_motor.momentumBack, 5);
 
-        // 显示找到的死区值
+        // 鏄剧ず鎵惧埌鐨勬鍖哄��
         if (front_done)
         {
             lcd_show_string(0, 5, "Front min:");
@@ -315,22 +316,22 @@ void test_side_deadzone()
             lcd_show_int(10, 6, found_back, 5);
         }
 
-        // 安全检查
+        // 瀹夊叏妫�鏌�
         if (front_deadzone >= 10000 || back_deadzone >= 10000)
         {
             lcd_show_string(0, 7, "Error: Too high!");
             break;
         }
 
-        // 如果两个都找到了就停止增加PWM
+        // 濡傛灉涓や釜閮芥壘鍒颁簡灏卞仠姝㈠鍔燩WM
         if (front_done && back_done)
         {
-            system_delay_ms(100); // 延时避免刷新太快
+            system_delay_ms(100); // 寤舵椂閬垮厤鍒锋柊澶揩
             small_driver_set_duty(0, 0);
         }
     }
 
-    small_driver_set_duty(0, 0); // 停止电机
+    small_driver_set_duty(0, 0); // 鍋滄鐢垫満
     lcd_clear();
 }
 
@@ -345,7 +346,7 @@ void test_bottom_pwm()
 
     int32 current_pwm = 0;
     int32 output_pwm = 0;
-    uint8 direction = 1; // 1为正向，0为反向
+    uint8 direction = 1; // 1涓烘鍚戯紝0涓哄弽鍚�
 
     while (keymsg.key != KEY_L)
     {
@@ -353,30 +354,30 @@ void test_bottom_pwm()
         {
             current_pwm += 10;
             if (current_pwm > 10000)
-                current_pwm = 10000; // PWM上限
+                current_pwm = 10000; // PWM涓婇檺
         }
         else if (keymsg.key == KEY_D)
         {
             current_pwm -= 10;
             if (current_pwm < 0)
-                current_pwm = 0; // PWM下限
+                current_pwm = 0; // PWM涓嬮檺
         }
         else if (keymsg.key == KEY_R)
         {
             direction = !direction;
-            system_delay_ms(200); // 切换方向时增加延时防止抖动
+            system_delay_ms(200); // 鍒囨崲鏂瑰悜鏃跺鍔犲欢鏃堕槻姝㈡姈鍔�
         }
         else if (keymsg.key == KEY_B)
         {
-            output_pwm = current_pwm; // 确认输出当前PWM值
+            output_pwm = current_pwm; // 纭杈撳嚭褰撳墠PWM鍊�
             system_delay_ms(200);
         }
 
-        // 更新电机输出
+        // 鏇存柊鐢垫満杈撳嚭
         gpio_set_level(DIR_BOTTOM, direction);
-        pwm_set_duty(MOTOR_BOTTOM, output_pwm); // 使用确认后的PWM值
+        pwm_set_duty(MOTOR_BOTTOM, output_pwm); // 浣跨敤纭鍚庣殑PWM鍊�
 
-        // 显示当前状态
+        // 鏄剧ず褰撳墠鐘舵��
         lcd_show_string(0, 5, "Set PWM:");
         lcd_show_int(9, 5, current_pwm, 5);
         lcd_show_string(0, 6, "Out PWM:");
@@ -384,10 +385,10 @@ void test_bottom_pwm()
         lcd_show_string(0, 7, "Speed:");
         lcd_show_float(7, 7, g_vel_motor.bottom_real, 3, 2);
 
-        system_delay_ms(50); // 调整延时控制PWM变化速度
+        system_delay_ms(50); // 璋冩暣寤舵椂鎺у埗PWM鍙樺寲閫熷害
     }
 
-    pwm_set_duty(MOTOR_BOTTOM, 0); // 停止电机
+    pwm_set_duty(MOTOR_BOTTOM, 0); // 鍋滄鐢垫満
     lcd_clear();
 }
 
@@ -403,33 +404,33 @@ void test_bottom_deadzone()
     uint32 found_backward = 0;
     uint8 forward_done = 0;
     uint8 backward_done = 0;
-    float speed_threshold = 0.1f; // 速度阈值，当检测到速度超过此值时认为电机已启动
+    float speed_threshold = 0.1f; // 閫熷害闃堝�硷紝褰撴娴嬪埌閫熷害瓒呰繃姝ゅ�兼椂璁や负鐢垫満宸插惎鍔�
 
-    // 首先测试正向死区
-    gpio_set_level(DIR_BOTTOM, 1); // 设置为正向
+    // 棣栧厛娴嬭瘯姝ｅ悜姝诲尯
+    gpio_set_level(DIR_BOTTOM, 1); // 璁剧疆涓烘鍚�
 
     while (keymsg.key != KEY_L)
     {
-        // 测试正向死区
+        // 娴嬭瘯姝ｅ悜姝诲尯
         if (!forward_done)
         {
-            forward_deadzone += 5; // 每次增加5的PWM值
+            forward_deadzone += 5; // 姣忔澧炲姞5鐨凱WM鍊�
             pwm_set_duty(MOTOR_BOTTOM, forward_deadzone);
-            system_delay_ms(100); // 给电机一些响应时间
+            system_delay_ms(100); // 缁欑數鏈轰竴浜涘搷搴旀椂闂�
 
-            // 如果速度超过阈值，则确认找到死区值
+            // 濡傛灉閫熷害瓒呰繃闃堝�硷紝鍒欑‘璁ゆ壘鍒版鍖哄��
             if (fabs(g_vel_motor.bottom) > speed_threshold)
             {
                 found_forward = forward_deadzone;
                 forward_done = 1;
 
-                // 停止电机，准备测试反向
+                // 鍋滄鐢垫満锛屽噯澶囨祴璇曞弽鍚�
                 pwm_set_duty(MOTOR_BOTTOM, 0);
-                system_delay_ms(500);          // 等待电机完全停止
-                gpio_set_level(DIR_BOTTOM, 0); // 设置为反向
+                system_delay_ms(500);          // 绛夊緟鐢垫満瀹屽叏鍋滄
+                gpio_set_level(DIR_BOTTOM, 0); // 璁剧疆涓哄弽鍚�
             }
         }
-        // 测试反向死区
+        // 娴嬭瘯鍙嶅悜姝诲尯
         else if (!backward_done)
         {
             backward_deadzone += 5;
@@ -441,18 +442,18 @@ void test_bottom_deadzone()
                 found_backward = backward_deadzone;
                 backward_done = 1;
 
-                // 停止电机
+                // 鍋滄鐢垫満
                 pwm_set_duty(MOTOR_BOTTOM, 0);
             }
         }
 
-        // 显示当前测试状态
+        // 鏄剧ず褰撳墠娴嬭瘯鐘舵��
         lcd_show_string(0, 2, "FPWM:");
         lcd_show_int(12, 2, forward_deadzone, 5);
         lcd_show_string(0, 3, "Speed:");
         lcd_show_float(7, 3, g_vel_motor.bottom_real, 3, 2);
 
-        // 显示找到的死区值
+        // 鏄剧ず鎵惧埌鐨勬鍖哄��
         if (forward_done)
         {
             lcd_show_string(0, 4, "Fmin:");
@@ -467,7 +468,7 @@ void test_bottom_deadzone()
             lcd_show_string(0, 1, "Complete");
         }
 
-        // 如果两个方向都测试完成，就显示结果
+        // 濡傛灉涓や釜鏂瑰悜閮芥祴璇曞畬鎴愶紝灏辨樉绀虹粨鏋�
         if (forward_done && backward_done)
         {
             lcd_show_string(0, 6, "Test done");
@@ -475,7 +476,7 @@ void test_bottom_deadzone()
         }
     }
 
-    // 退出前确保电机停止
+    // 閫�鍑哄墠纭繚鐢垫満鍋滄
     pwm_set_duty(MOTOR_BOTTOM, 0);
     lcd_clear();
 }
@@ -532,7 +533,7 @@ void test_key()
         lcd_show_string(0, 3, "Status:");
         lcd_show_int(10, 3, keymsg.status, 2);
 
-        system_delay_ms(1); // 减少刷新频率
+        system_delay_ms(1); // 鍑忓皯鍒锋柊棰戠巼
     }
     lcd_clear();
 }
@@ -674,7 +675,7 @@ void test_img_shoot()
     else
     {
         lcd_show_string(0, 0, "SD Init Success!");
-        sd_clear_data(); // 清除之前的数据
+        sd_clear_data(); // 娓呴櫎涔嬪墠鐨勬暟鎹�
         system_delay_ms(500);
     }
 
@@ -690,7 +691,7 @@ void test_img_shoot()
 
             if (keymsg.key == KEY_B)
             {
-                memcpy(s_edge_map, mt9v03x_image, MT9V03X_W * MT9V03X_H); // 暂且拿这个存
+                memcpy(s_edge_map, mt9v03x_image, MT9V03X_W * MT9V03X_H); // 鏆備笖鎷胯繖涓瓨
                 sd_result = sd_write_data((uint8 *)s_edge_map, MT9V03X_IMAGE_SIZE, SD_WRITE_APPEND);
                 if (sd_result == SD_OK)
                 {
@@ -708,38 +709,38 @@ void test_line()
 {
     lcd_clear();
     int pos = 0;
-    uint8_t last_key = KEY_NONE; // 记录上一次按键，用于消抖
-    while (keymsg.key != KEY_L)  // 主循环，L键退出
+    uint8_t last_key = KEY_NONE; // 璁板綍涓婁竴娆℃寜閿紝鐢ㄤ簬娑堟姈
+    while (keymsg.key != KEY_L)  // 涓诲惊鐜紝L閿��鍑�
     {
         if ((keymsg.key == KEY_U || keymsg.key == KEY_D) && keymsg.key != last_key)
         {
-            // 如果是新的按键，更新位置
-            if (keymsg.key == KEY_D) // 向上移动线
+            // 濡傛灉鏄柊鐨勬寜閿紝鏇存柊浣嶇疆
+            if (keymsg.key == KEY_D) // 鍚戜笂绉诲姩绾�
             {
                 pos += 1;
                 if (pos >= MT9V03X_H)
-                    pos = 0; // 限制在图像高度范围内
+                    pos = 0; // 闄愬埗鍦ㄥ浘鍍忛珮搴﹁寖鍥村唴
             }
-            else if (keymsg.key == KEY_U) // 向下移动线
+            else if (keymsg.key == KEY_U) // 鍚戜笅绉诲姩绾�
             {
                 pos -= 1;
                 if (pos < 0)
-                    pos = MT9V03X_H - 1; // 限制在图像高度范围内
+                    pos = MT9V03X_H - 1; // 闄愬埗鍦ㄥ浘鍍忛珮搴﹁寖鍥村唴
             }
 
-            // 更新last_key，并进入等待按键释放状态
+            // 鏇存柊last_key锛屽苟杩涘叆绛夊緟鎸夐敭閲婃斁鐘舵��
             last_key = keymsg.key;
         }
         else if (keymsg.key == KEY_NONE && last_key != KEY_NONE)
         {
-            // 当按键释放时，重置last_key以允许下一次按键触发
+            // 褰撴寜閿噴鏀炬椂锛岄噸缃甽ast_key浠ュ厑璁镐笅涓�娆℃寜閿Е鍙�
             last_key = KEY_NONE;
         }
 
         if (mt9v03x_finish_flag)
         {
             mt9v03x_finish_flag = 0;
-            draw_Hline(mt9v03x_image, pos, RGB565_WHITE); // 绘制水平线
+            draw_Hline(mt9v03x_image, pos, RGB565_WHITE); // 缁樺埗姘村钩绾�
             lcd_show_image(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
             lcd_show_int(0, 7, pos, 3);
             lcd_show_float(5, 7, PITCH, 3, 3);
@@ -777,4 +778,107 @@ void test_encoder_to_velocity()
     pit_enable(CCU60_CH0);
     lcd_clear();
     encoder_clear_count(ENCODER_BOTTOM);
+}
+
+void test_switch()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "Switch Test");
+    while (keymsg.key != KEY_L)
+    {
+        lcd_show_string(0, 1, "Switch 1:");
+        lcd_show_int(9, 1, switch_get_state(SWITCH_1), 1);
+        lcd_show_string(0, 2, "Switch 2:");
+        lcd_show_int(9, 2, switch_get_state(SWITCH_2), 1);
+        lcd_show_string(0, 3, "Switch 3:");
+        lcd_show_int(9, 3, switch_get_state(SWITCH_3), 1);
+        lcd_show_string(0, 4, "Switch 4:");
+        lcd_show_int(9, 4, switch_get_state(SWITCH_4), 1);
+    }
+    lcd_clear();
+}
+
+void test_diode()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "LED & Buzzer");
+    lcd_show_string(0, 1, "KEY_U: val++");
+    lcd_show_string(0, 2, "KEY_D: val--");
+    lcd_show_string(0, 3, "KEY_R: switch");
+    lcd_show_string(0, 4, "KEY_B: on");
+    lcd_show_string(0, 5, "Press KEY_L to exit");
+    uint8 cur = 0;
+    uint8 val[3] = {0, 0, 0};
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U)
+        {
+            val[cur]++;
+        }
+        else if (keymsg.key == KEY_D)
+        {
+            val[cur]--;
+        }
+        else if (keymsg.key == KEY_R)
+        {
+            cur = (cur + 1) % 3;
+        }
+        else if (keymsg.key == KEY_B)
+        {
+            uint8 i = DIODE_NUM;
+            while (i--)
+            {
+                diode_set(i, val[0], val[1], val[2]);
+                diode_on(i);
+            }
+        }
+        lcd_show_uint(0, 6, val[0], 3);
+        lcd_show_uint(5, 6, val[1], 3);
+        lcd_show_uint(10, 6, val[2], 3);
+        system_delay_ms(100);
+    }
+    uint8 i = DIODE_NUM;
+    while (i--)
+    {
+        diode_off(i);
+    }
+    lcd_clear();
+}
+
+void test_dual_camera()
+{
+    lcd_clear();
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+            tft180_show_gray_image(0, 0, mt9v03x_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+        }
+        // if (mt9v03x2_finish_flag)
+        // {
+        //     mt9v03x2_finish_flag = 0;
+        //     tft180_show_gray_image(tft180_width_max - MT9V03X_W / 2, tft180_height_max - MT9V03X_H / 2, mt9v03x2_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+        // }
+    }
+    lcd_clear();
+}
+
+void test_cpu_freq()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "CPU Freq");
+    while (keymsg.key != KEY_L)
+    {
+        lcd_show_string(0, 1, "CPU0: ");
+        lcd_show_float(6, 1, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_0) / 1e6, 5, 2);
+        lcd_show_string(11, 1, " MHz");
+        lcd_show_string(0, 2, "CPU1: ");
+        lcd_show_float(6, 2, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_1) / 1e6, 5, 2);
+        lcd_show_string(11, 2, " MHz");
+        lcd_show_string(0, 3, "CPU2: ");
+        lcd_show_float(6, 3, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_2) / 1e6, 5, 2);
+        lcd_show_string(11, 3, " MHz");
+    }
+    lcd_clear();
 }

@@ -143,7 +143,7 @@ uint8 camera_init(uint8 *source_addr,
         }
         link_list_num = dma_init(
             OV7725_DMA_CH, source_addr, destination_addr, OV7725_PCLK_PIN,
-            EXTI_TRIGGER_FALLING, image_size, DMA_INT_PRIO);
+            EXTI_TRIGGER_FALLING, image_size, DMA_1_INT_PRIO);
         exti_init(
             OV7725_VSYNC_PIN,
             EXTI_TRIGGER_FALLING); // 初始化场中断，并设置为下降沿触发中断
@@ -157,7 +157,7 @@ uint8 camera_init(uint8 *source_addr,
         link_list_num = dma_init(
             MT9V03X_DMA_CH, source_addr, destination_addr, MT9V03X_PCLK_PIN,
             EXTI_TRIGGER_FALLING, image_size,
-            DMA_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
+            DMA_1_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
 
         exti_init(
             MT9V03X_VSYNC_PIN,
@@ -172,7 +172,7 @@ uint8 camera_init(uint8 *source_addr,
         link_list_num =
             dma_init(MT9V03X2_DMA_CH, source_addr, destination_addr,
                      MT9V03X2_PCLK_PIN, EXTI_TRIGGER_FALLING, image_size,
-                     DMA_INT_PRIO_2); // 如果超频到300M
+                     DMA_2_INT_PRIO); // 如果超频到300M
                                       // 倒数第二个参数请设置为FALLING
 
         exti_init(
@@ -189,7 +189,7 @@ uint8 camera_init(uint8 *source_addr,
         link_list_num = dma_init(
             SCC8660_DMA_CH, source_addr, destination_addr, SCC8660_PCLK_PIN,
             EXTI_TRIGGER_RISING, image_size,
-            DMA_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
+            DMA_1_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
 
         exti_init(
             SCC8660_VSYNC_PIN,
@@ -229,7 +229,7 @@ uint8 camera_init_2(uint8 *source_addr,
         }
         link_list_num = dma_init_2(
             OV7725_DMA_CH, source_addr, destination_addr, OV7725_PCLK_PIN,
-            EXTI_TRIGGER_FALLING, image_size, DMA_INT_PRIO);
+            EXTI_TRIGGER_FALLING, image_size, DMA_1_INT_PRIO);
         exti_init(
             OV7725_VSYNC_PIN,
             EXTI_TRIGGER_FALLING); // 初始化场中断，并设置为下降沿触发中断
@@ -243,7 +243,7 @@ uint8 camera_init_2(uint8 *source_addr,
         link_list_num = dma_init_2(
             MT9V03X_DMA_CH, source_addr, destination_addr, MT9V03X_PCLK_PIN,
             EXTI_TRIGGER_FALLING, image_size,
-            DMA_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
+            DMA_1_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
 
         exti_init(
             MT9V03X_VSYNC_PIN,
@@ -258,7 +258,7 @@ uint8 camera_init_2(uint8 *source_addr,
         link_list_num =
             dma_init_2(MT9V03X2_DMA_CH, source_addr, destination_addr,
                        MT9V03X2_PCLK_PIN, EXTI_TRIGGER_FALLING, image_size,
-                       DMA_INT_PRIO_2); // 如果超频到300M
+                       DMA_2_INT_PRIO); // 如果超频到300M
                                         // 倒数第二个参数请设置为FALLING
 
         exti_init(
@@ -275,7 +275,7 @@ uint8 camera_init_2(uint8 *source_addr,
         link_list_num = dma_init_2(
             SCC8660_DMA_CH, source_addr, destination_addr, SCC8660_PCLK_PIN,
             EXTI_TRIGGER_RISING, image_size,
-            DMA_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
+            DMA_1_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
 
         exti_init(
             SCC8660_VSYNC_PIN,

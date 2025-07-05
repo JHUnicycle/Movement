@@ -9,8 +9,8 @@
 #include "guide.h"
 
 //======================================================================================================================
-typedef struct MENU_TABLE MENU_TABLE; // 菜单执行
-typedef struct MENU_PRMT MENU_PRMT;   // 菜单参数
+typedef struct MENU_TABLE MENU_TABLE; // 鑿滃崟鎵ц
+typedef struct MENU_PRMT MENU_PRMT;   // 鑿滃崟鍙傛暟
 typedef enum MenuType MenuType;
 typedef union Item Item;
 typedef union MenuParam MenuParam;
@@ -373,6 +373,22 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_encoder_to_velocity}},
+    {(uint8 *)"Switch",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_switch}},
+    {(uint8 *)"Diode",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_diode}},
+    {(uint8 *)"DualCam",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_dual_camera}},
+    {(uint8 *)"CpuFreq",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_cpu_freq}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {
@@ -474,7 +490,7 @@ MENU_TABLE MainMenu_Table[] = {
 
 /******************************************************************************
  * FunctionName   : MainMenu_Set()
- * Description    : 常规设置
+ * Description    : 甯歌璁剧疆
  * EntryParameter : None
  * ReturnValue    : None
  *******************************************************************************/
@@ -484,75 +500,75 @@ void MainMenu_Set()
     lcd_clear();
     MENU_PRMT MainMenu_Prmt;
     uint8 menuNum =
-        sizeof(MainMenu_Table) / sizeof(MainMenu_Table[0]); // 菜单项数
+        sizeof(MainMenu_Table) / sizeof(MainMenu_Table[0]); // 鑿滃崟椤规暟
     Menu_Process((uint8 *)" -=    Setting   =- ", &MainMenu_Prmt, MainMenu_Table,
                  menuNum);
-    Write_EEPROM(); // 将数据写入EEPROM保存
+    Write_EEPROM(); // 灏嗘暟鎹啓鍏EPROM淇濆瓨
     lcd_clear();
 }
 //================================================================================================================
-// 菜单基本函数
-// 不用管这个部分 基本不用改
+// 鑿滃崟鍩烘湰鍑芥暟
+// 涓嶇敤绠¤繖涓儴鍒� 鍩烘湰涓嶇敤鏀�
 /******************************************************************************
  * FunctionName   : Menu_PrmtInit()
- * Description    : 初始化菜单参数
- * EntryParameter : prmt - 菜单参数, num - 每页显示项数, page - 最大显示页数
+ * Description    : 鍒濆鍖栬彍鍗曞弬鏁�
+ * EntryParameter : prmt - 鑿滃崟鍙傛暟, num - 姣忛〉鏄剧ず椤规暟, page - 鏈�澶ф樉绀洪〉鏁�
  * ReturnValue    : None
  *******************************************************************************/
 void Menu_PrmtInit(MENU_PRMT *prmt, uint8 num, uint8 page)
 {
-    prmt->ExitMark = 0;   // 清除退出菜单标志
-    prmt->Cursor = 0;     // 光标清零
-    prmt->PageNo = 0;     // 页清零
-    prmt->Index = 0;      // 索引清零
-    prmt->DispNum = num;  // 页最多显示项目数
-    prmt->MaxPage = page; // 最多页数
+    prmt->ExitMark = 0;   // 娓呴櫎閫�鍑鸿彍鍗曟爣蹇�
+    prmt->Cursor = 0;     // 鍏夋爣娓呴浂
+    prmt->PageNo = 0;     // 椤垫竻闆�
+    prmt->Index = 0;      // 绱㈠紩娓呴浂
+    prmt->DispNum = num;  // 椤垫渶澶氭樉绀洪」鐩暟
+    prmt->MaxPage = page; // 鏈�澶氶〉鏁�
 }
 /******************************************************************************
  * FunctionName   : Menu_Move()
- * Description    : 菜单移动
- * EntryParameter : prmt - 菜单参数, key - 按键值
- * ReturnValue    : 有确认返回0，否则返回1
+ * Description    : 鑿滃崟绉诲姩
+ * EntryParameter : prmt - 鑿滃崟鍙傛暟, key - 鎸夐敭鍊�
+ * ReturnValue    : 鏈夌‘璁よ繑鍥�0锛屽惁鍒欒繑鍥�1
  ******************************************************************************/
 uint8 Menu_Move(MENU_PRMT *prmt, KEY_e key)
 {
     uint8 rValue = 1;
     switch (key)
     {
-    case KEY_U: // 向上
+    case KEY_U: // 鍚戜笂
     {
-        if (prmt->Cursor != 0) // 光标不在顶端
+        if (prmt->Cursor != 0) // 鍏夋爣涓嶅湪椤剁
         {
-            prmt->Cursor--; // 光标上移
+            prmt->Cursor--; // 鍏夋爣涓婄Щ
         }
-        else // 光标在顶端
+        else // 鍏夋爣鍦ㄩ《绔�
         {
-            if (prmt->PageNo != 0) // 页面没有到最小
+            if (prmt->PageNo != 0) // 椤甸潰娌℃湁鍒版渶灏�
             {
-                prmt->PageNo--; // 向上翻
+                prmt->PageNo--; // 鍚戜笂缈�
             }
             else
             {
-                prmt->Cursor = prmt->DispNum - 1; // 光标到底
-                prmt->PageNo = prmt->MaxPage - 1; // 最后页
+                prmt->Cursor = prmt->DispNum - 1; // 鍏夋爣鍒板簳
+                prmt->PageNo = prmt->MaxPage - 1; // 鏈�鍚庨〉
             }
         }
         break;
     }
 
-    case KEY_D: // 向下
+    case KEY_D: // 鍚戜笅
     {
-        if (prmt->Cursor < prmt->DispNum - 1) // 光标没有到底，移动光标
+        if (prmt->Cursor < prmt->DispNum - 1) // 鍏夋爣娌℃湁鍒板簳锛岀Щ鍔ㄥ厜鏍�
         {
-            prmt->Cursor++; // 光标向下移动
+            prmt->Cursor++; // 鍏夋爣鍚戜笅绉诲姩
         }
-        else // 光标到底
+        else // 鍏夋爣鍒板簳
         {
-            if (prmt->PageNo < prmt->MaxPage - 1) // 页面没有到底，页面移动
+            if (prmt->PageNo < prmt->MaxPage - 1) // 椤甸潰娌℃湁鍒板簳锛岄〉闈㈢Щ鍔�
             {
-                prmt->PageNo++; // 下翻一页
+                prmt->PageNo++; // 涓嬬炕涓�椤�
             }
-            else // 页面和光标都到底，返回开始页
+            else // 椤甸潰鍜屽厜鏍囬兘鍒板簳锛岃繑鍥炲紑濮嬮〉
             {
                 prmt->Cursor = 0;
                 prmt->PageNo = 0;
@@ -560,52 +576,52 @@ uint8 Menu_Move(MENU_PRMT *prmt, KEY_e key)
         }
         break;
     }
-    case KEY_B: // 确认
+    case KEY_B: // 纭
     {
-        prmt->Index = prmt->Cursor + prmt->PageNo; // 计算执行项的索引
+        prmt->Index = prmt->Cursor + prmt->PageNo; // 璁＄畻鎵ц椤圭殑绱㈠紩
         rValue = 0;
 
         break;
     }
-    case KEY_L: // 左键返回上级菜单
+    case KEY_L: // 宸﹂敭杩斿洖涓婄骇鑿滃崟
     {
         prmt->ExitMark = 1;
 
         break;
     }
-    case KEY_R: // 右键跳到底部
+    case KEY_R: // 鍙抽敭璺冲埌搴曢儴
     {
-        prmt->Cursor = prmt->DispNum - 1; // 光标到底
-        prmt->PageNo = prmt->MaxPage - 1; // 最后页
+        prmt->Cursor = prmt->DispNum - 1; // 鍏夋爣鍒板簳
+        prmt->PageNo = prmt->MaxPage - 1; // 鏈�鍚庨〉
         break;
     }
     default:
         break;
     }
-    return rValue; // 返回执行索引
+    return rValue; // 杩斿洖鎵ц绱㈠紩
 }
 /******************************************************************************
  * FunctionName   : KeySan()
- * Description    : 按键获取
+ * Description    : 鎸夐敭鑾峰彇
  * EntryParameter : None
- * ReturnValue    : 按键值
+ * ReturnValue    : 鎸夐敭鍊�
  *******************************************************************************/
 KEY_e KeySan(void)
 {
     KEY_e key_temp = KEY_NONE;
     while (keymsg.status == KEY_UP)
     {
-        // 等待按键被按下
-        system_delay_ms(10); // 避免过度占用CPU
+        // 绛夊緟鎸夐敭琚寜涓�
+        system_delay_ms(10); // 閬垮厤杩囧害鍗犵敤CPU
     }
 
-    key_temp = keymsg.key; // 保存当前按键值
-    key_clear_msg();       // 清除按键状态
-    return key_temp;       // 返回按键值
+    key_temp = keymsg.key; // 淇濆瓨褰撳墠鎸夐敭鍊�
+    key_clear_msg();       // 娓呴櫎鎸夐敭鐘舵��
+    return key_temp;       // 杩斿洖鎸夐敭鍊�
 }
 /******************************************************************************
  * FunctionName   : SubNameCat()
- * Description    : 生成子菜单标题
+ * Description    : 鐢熸垚瀛愯彍鍗曟爣棰�
  * EntryParameter : None
  * ReturnValue    : void
  *******************************************************************************/
@@ -667,15 +683,15 @@ void SubNameCat(uint8 *SubMenuName, uint8 *TableMenuName)
     // if (NameLenth > 14) NameLenth = 14;
     // strcat((char*)SubMenuName,(char*)SubTitle1);
     // for (uint8 i = 0;i < (14-NameLenth)/2         ;i ++)
-    // strcat((char*)SubMenuName," "); //填充空格
+    // strcat((char*)SubMenuName," "); //濉厖绌烘牸
     // strcat((char*)SubMenuName,(char*)TableBody);
     // for (uint8 i = 0;i < 7-NameLenth + NameLenth/2;i ++)
-    // strcat((char*)SubMenuName," "); //填充空格
+    // strcat((char*)SubMenuName," "); //濉厖绌烘牸
     // strcat((char*)SubMenuName,(char*)SubTitle2);
 }
 /******************************************************************************
  * FunctionName   : adjustParam()
- * Description    : 调整参数
+ * Description    : 璋冩暣鍙傛暟
  * EntryParameter : None
  * ReturnValue    : void
  *******************************************************************************/
@@ -684,7 +700,7 @@ void adjustParam(Site_t site, MENU_TABLE *table)
     KEY_e key;
     do
     {
-        key = KeySan(); // 使用修改后的KeySan函数，会自动清除按键状态
+        key = KeySan(); // 浣跨敤淇敼鍚庣殑KeySan鍑芥暟锛屼細鑷姩娓呴櫎鎸夐敭鐘舵��
         MenuParam param;
         if (table->MenuType == Param_Uint)
             param.UINT32 = table->MenuParams.UINT32;
@@ -768,8 +784,8 @@ void adjustParam(Site_t site, MENU_TABLE *table)
 
 /******************************************************************************
  * FunctionName   : Menu_Display()
- * Description    : 显示菜单项
- * EntryParameter : page - 显示页，dispNum - 每一页的显示项，cursor - 光标位置
+ * Description    : 鏄剧ず鑿滃崟椤�
+ * EntryParameter : page - 鏄剧ず椤碉紝dispNum - 姣忎竴椤电殑鏄剧ず椤癸紝cursor - 鍏夋爣浣嶇疆
  * ReturnValue    : None
  *******************************************************************************/
 void Menu_Display(MENU_TABLE *menuTable,
@@ -784,16 +800,16 @@ void Menu_Display(MENU_TABLE *menuTable,
         site.x = 0;
         site.y = i + 1;
         if (cursor == i)
-            /* 反白显示当前光标选中菜单项 */
+            /* 鍙嶇櫧鏄剧ず褰撳墠鍏夋爣閫変腑鑿滃崟椤� */
             lcd_show_string_color((uint16)site.x, (uint16)site.y,
                                   (const int8 *)menuTable[pageNo + i].MenuName,
                                   DEFAULT_BACKGROUND_COLOR, DEFAULT_PEN_COLOR);
         else
-            /* 正常显示其余菜单项 */
+            /* 姝ｅ父鏄剧ず鍏朵綑鑿滃崟椤� */
             lcd_show_string_color((uint16)site.x, (uint16)site.y,
                                   (const int8 *)menuTable[pageNo + i].MenuName,
                                   DEFAULT_PEN_COLOR, DEFAULT_BACKGROUND_COLOR);
-        /* 若此菜单项有需要调的参数，则显示该参数 */
+        /* 鑻ユ鑿滃崟椤规湁闇�瑕佽皟鐨勫弬鏁帮紝鍒欐樉绀鸿鍙傛暟 */
         if (menuTable[pageNo + i].MenuType == Param_Uint ||
             menuTable[pageNo + i].MenuType == Param_Int ||
             menuTable[pageNo + i].MenuType == Enumerate)
@@ -823,10 +839,10 @@ void Menu_Display(MENU_TABLE *menuTable,
 
 /******************************************************************************
  * FunctionName   : Menu_Process()
- * Description    : 处理菜单项
- * EntryParameter : menuName - 菜单名称，prmt - 菜单参数，table - 菜单表项, num
- *- 菜单项数 ReturnValue    : None Describe
- *: 1.进入子菜单 2.调节参数 3.调节参数并执行 4.执行函数
+ * Description    : 澶勭悊鑿滃崟椤�
+ * EntryParameter : menuName - 鑿滃崟鍚嶇О锛宲rmt - 鑿滃崟鍙傛暟锛宼able - 鑿滃崟琛ㄩ」, num
+ *- 鑿滃崟椤规暟 ReturnValue    : None Describe
+ *: 1.杩涘叆瀛愯彍鍗� 2.璋冭妭鍙傛暟 3.璋冭妭鍙傛暟骞舵墽琛� 4.鎵ц鍑芥暟
  ******************************************************************************/
 void Menu_Process(uint8 *menuName,
                   MENU_PRMT *prmt,
@@ -835,7 +851,7 @@ void Menu_Process(uint8 *menuName,
 {
     KEY_e key;
     Site_t site;
-    uint8 page; // 显示菜单需要的页数
+    uint8 page; // 鏄剧ず鑿滃崟闇�瑕佺殑椤垫暟
     if (num - PAGE_DISP_NUM <= 0)
         page = 1;
     else
@@ -843,20 +859,20 @@ void Menu_Process(uint8 *menuName,
         page = num - PAGE_DISP_NUM + 1;
         num = PAGE_DISP_NUM;
     }
-    // 显示项数和页数设置
+    // 鏄剧ず椤规暟鍜岄〉鏁拌缃�
     Menu_PrmtInit(prmt, num, page);
     do
     {
         lcd_clear();
-        lcd_show_string(0, 0, (const int8 *)menuName); // 显示菜单标题
-        // 显示菜单项
+        lcd_show_string(0, 0, (const int8 *)menuName); // 鏄剧ず鑿滃崟鏍囬
+        // 鏄剧ず鑿滃崟椤�
         Menu_Display(table, prmt->PageNo, prmt->DispNum, prmt->Cursor);
-        key = KeySan(); // 获取按键
+        key = KeySan(); // 鑾峰彇鎸夐敭
 
-        if (Menu_Move(prmt, key) == 0) // 菜单移动 按下确认键
+        if (Menu_Move(prmt, key) == 0) // 鑿滃崟绉诲姩 鎸変笅纭閿�
         {
-            // 判断此菜单项有无需要调节的参数 有则进入参数调节
-            // 在参数调节里看有无函数同时运行
+            // 鍒ゆ柇姝よ彍鍗曢」鏈夋棤闇�瑕佽皟鑺傜殑鍙傛暟 鏈夊垯杩涘叆鍙傛暟璋冭妭
+            // 鍦ㄥ弬鏁拌皟鑺傞噷鐪嬫湁鏃犲嚱鏁板悓鏃惰繍琛�
             if (table[prmt->Index].MenuType == Param_Uint ||
                 table[prmt->Index].MenuType == Param_Int ||
                 table[prmt->Index].MenuType == Enumerate)
@@ -877,19 +893,19 @@ void Menu_Process(uint8 *menuName,
                         (int8 *)(table[prmt->Index].ItemHook.EnumName +
                                  (*(table[prmt->Index].MenuParams.INT32)) *
                                      EnumNameLenth));
-                // 在参数调节里看有无函数同时运行  可以同时执行
-                // 方便舵机调试，电机调试 这个在上面的调节参数函数里已经执行过
+                // 鍦ㄥ弬鏁拌皟鑺傞噷鐪嬫湁鏃犲嚱鏁板悓鏃惰繍琛�  鍙互鍚屾椂鎵ц
+                // 鏂逛究鑸垫満璋冭瘯锛岀數鏈鸿皟璇� 杩欎釜鍦ㄤ笂闈㈢殑璋冭妭鍙傛暟鍑芥暟閲屽凡缁忔墽琛岃繃
                 adjustParam(site, &table[prmt->Index]);
             }
-            // 不是参数调节的话就执行菜单函数
+            // 涓嶆槸鍙傛暟璋冭妭鐨勮瘽灏辨墽琛岃彍鍗曞嚱鏁�
             else if (table[prmt->Index].MenuType == Functions)
             {
-                table[prmt->Index].ItemHook.ItemFunc(); // 执行相应项
+                table[prmt->Index].ItemHook.ItemFunc(); // 鎵ц鐩稿簲椤�
             }
-            // 没有参数调节和函数执行的话 就是子菜单
+            // 娌℃湁鍙傛暟璋冭妭鍜屽嚱鏁版墽琛岀殑璇� 灏辨槸瀛愯彍鍗�
             else if (table[prmt->Index].MenuType == Sub_Menus)
             {
-                // 确定有子菜单
+                // 纭畾鏈夊瓙鑿滃崟
                 //                if (table[prmt->Index].MenuParams.SubMenu !=
                 //                Table_Null){
                 lcd_clear();
@@ -909,7 +925,7 @@ void Menu_Process(uint8 *menuName,
 
 void write_Flash(uint8 flashNum)
 {
-    /* 一共有96KB 96KB分为了12页 每页可以存1024个uint32类型的数据 仅使用第0页 */
+    /* 涓�鍏辨湁96KB 96KB鍒嗕负浜�12椤� 姣忛〉鍙互瀛�1024涓猽int32绫诲瀷鐨勬暟鎹� 浠呬娇鐢ㄧ0椤� */
     const uint16 Flash_Save_uintNum =
         sizeof(EEPROM_DATA_UINT) / sizeof(EEPROM_DATA_UINT[0]);
     const uint16 Flash_Save_intNum =
@@ -923,19 +939,19 @@ void write_Flash(uint8 flashNum)
             (int32)*EEPROM_DATA_INT[i];
     flash_write_page_from_buffer(0, (uint32)flashNum);
 
-    flash_buffer_clear(); // 清除缓存
+    flash_buffer_clear(); // 娓呴櫎缂撳瓨
     lcd_show_string(0, 0, "WRITE IS OK!");
 }
 
 void read_Flash(uint8 flashNum)
 {
-    /* 每页可以存1024个uint32类型的数据 */
+    /* 姣忛〉鍙互瀛�1024涓猽int32绫诲瀷鐨勬暟鎹� */
     const uint16 Flash_Save_uintNum =
         sizeof(EEPROM_DATA_UINT) / sizeof(EEPROM_DATA_UINT[0]);
     const uint16 Flash_Save_intNum =
         sizeof(EEPROM_DATA_INT) / sizeof(EEPROM_DATA_INT[0]);
-    flash_buffer_clear();                   // 清除缓存
-    flash_read_page_to_buffer(0, flashNum); // 将数据从缓存区读出来
+    flash_buffer_clear();                   // 娓呴櫎缂撳瓨
+    flash_read_page_to_buffer(0, flashNum); // 灏嗘暟鎹粠缂撳瓨鍖鸿鍑烘潵
     for (uint16 i = 0; i < Flash_Save_uintNum; i++)
     {
         uint32 temp_vaule = flash_union_buffer[i].uint32_type;
@@ -947,7 +963,7 @@ void read_Flash(uint8 flashNum)
             flash_union_buffer[Flash_Save_uintNum + i].int32_type;
         *EEPROM_DATA_INT[i] = temp_vaule;
     }
-    flash_buffer_clear(); // 清除缓存
+    flash_buffer_clear(); // 娓呴櫎缂撳瓨
     lcd_show_string(0, 0, "READ IS OK!");
 }
 
@@ -959,8 +975,8 @@ void Read_EEPROM()
         sizeof(EEPROM_DATA_UINT) / sizeof(EEPROM_DATA_UINT[0]);
     const uint16 Flash_Save_intNum =
         sizeof(EEPROM_DATA_INT) / sizeof(EEPROM_DATA_INT[0]);
-    flash_buffer_clear();             // 清除缓存
-    flash_read_page_to_buffer(0, 11); // 将数据从缓存区读出来
+    flash_buffer_clear();             // 娓呴櫎缂撳瓨
+    flash_read_page_to_buffer(0, 11); // 灏嗘暟鎹粠缂撳瓨鍖鸿鍑烘潵
     for (uint16 i = 0; i < Flash_Save_uintNum; i++)
     {
         uint32 temp_vaule = flash_union_buffer[i].uint32_type;
@@ -972,7 +988,7 @@ void Read_EEPROM()
             flash_union_buffer[Flash_Save_uintNum + i].int32_type;
         *EEPROM_DATA_INT[i] = temp_vaule;
     }
-    flash_buffer_clear(); // 清除缓存
+    flash_buffer_clear(); // 娓呴櫎缂撳瓨
     lcd_clear();
     lcd_show_string(0, 0, "READ SUCCESS");
 }
@@ -986,14 +1002,14 @@ void Write_EEPROM()
     const uint16 Flash_Save_intNum =
         sizeof(EEPROM_DATA_INT) / sizeof(EEPROM_DATA_INT[0]);
     flash_erase_page(0, 11);
-    flash_buffer_clear(); // 清除缓存
+    flash_buffer_clear(); // 娓呴櫎缂撳瓨
     for (uint16 i = 0; i < Flash_Save_uintNum; i++)
         flash_union_buffer[i].uint32_type = (uint32)*EEPROM_DATA_UINT[i];
     for (uint16 i = 0; i < Flash_Save_intNum; i++)
         flash_union_buffer[i + Flash_Save_uintNum].int32_type =
             (int32)*EEPROM_DATA_INT[i];
     flash_write_page_from_buffer(0, 11);
-    flash_buffer_clear(); // 清除缓存
+    flash_buffer_clear(); // 娓呴櫎缂撳瓨
     lcd_clear();
     lcd_show_string(0, 0, "WRITE SUCCESS");
 }

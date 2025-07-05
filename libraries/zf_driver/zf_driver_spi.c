@@ -191,7 +191,7 @@ void spi_mux (spi_index_enum spi_n, spi_sck_pin_enum sck_pin, spi_mosi_pin_enum 
 
             if      (SPI4_MOSI_P22_3  == mosi_pin)  set_pin->mtsr = &IfxQspi4_MTSRP_P22_3_OUT;
             else if (SPI4_MOSI_P22_0  == mosi_pin)  set_pin->mtsr = &IfxQspi4_MTSR_P22_0_OUT;
-            else if (SPI4_MOSI_33_12  == mosi_pin)  set_pin->mtsr = &IfxQspi4_MTSR_P33_12_OUT;
+            else if (SPI4_MOSI_P33_12  == mosi_pin)  set_pin->mtsr = &IfxQspi4_MTSR_P33_12_OUT;
             else    zf_assert(FALSE);
 
             if      (SPI4_MISO_P22_1  == miso_pin)  set_pin->mrst = &IfxQspi4_MRSTB_P22_1_IN;

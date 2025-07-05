@@ -137,6 +137,8 @@
 #include "single_driver.h"
 #include "system.h"
 #include "test.h"
+#include "switch.h"
+#include "diode.h"
 
 #include "pin.h"
 //=====================================================用户层=======================================================

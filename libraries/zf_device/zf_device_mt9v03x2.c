@@ -260,7 +260,7 @@ static void mt9v03x2_vsync_handler(void)
                                             MT9V03X2_PCLK_PIN,
                                             EXTI_TRIGGER_RISING,
                                             MT9V03X2_IMAGE_SIZE,
-                                            DMA_INT_PRIO_2); // 如果超频到300M 倒数第二个参数请设置为FALLING
+                                            DMA_2_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
         dma_enable(MT9V03X2_DMA_CH);
     }
     else

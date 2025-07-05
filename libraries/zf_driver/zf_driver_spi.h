@@ -79,7 +79,7 @@ typedef enum                                                                    
 
     SPI3_MOSI_P02_6  = 3*102+1*6 , SPI3_MOSI_P01_6, SPI3_MOSI_P10_6,                                                        // SPI3 MOSI引脚可选范围
 
-    SPI4_MOSI_P22_3  = 4*102+1*6 , SPI4_MOSI_P22_0, SPI4_MOSI_33_12                                                         // SPI4 CLK 引脚可选范围
+    SPI4_MOSI_P22_3  = 4*102+1*6 , SPI4_MOSI_P22_0, SPI4_MOSI_P33_12                                                         // SPI4 CLK 引脚可选范围
 }spi_mosi_pin_enum;
 
 typedef enum                                                                                                                // 枚举SPI MISO引脚 此枚举定义不允许用户修改

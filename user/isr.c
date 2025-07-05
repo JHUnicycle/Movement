@@ -42,6 +42,7 @@
 #include "menu.h"
 #include "system.h"
 #include "test.h"
+#include "diode.h"
 #include "velocity.h"
 
 // 对于TC系列默认是不支持中断嵌套的，希望支持中断嵌套需要在中断内使用
@@ -68,7 +69,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH1);
-
+    diode_handler();
     key_IRQHandler();
     while (key_get_msg(&keymsg))
         ;
@@ -178,12 +179,12 @@ IFX_INTERRUPT(exti_ch2_ch6_isr,
 // **************************** 外部中断函数 ****************************
 
 // **************************** DMA中断函数 ****************************
-IFX_INTERRUPT(dma_ch5_isr, DMA_INT_VECTAB_NUM, DMA_INT_PRIO)
+IFX_INTERRUPT(dma_ch5_isr, DMA_1_INT_VECTAB_NUM, DMA_1_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     camera_dma_handler();       // 摄像头采集完成统一回调函数
 }
-IFX_INTERRUPT(dma_ch6_isr, 0, DMA_INT_PRIO_2)
+IFX_INTERRUPT(dma_ch6_isr, DMA_2_INT_VECTAB_NUM, DMA_2_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     camera_dma_handler_2();     // 摄像头采集完成统一回调函数
@@ -214,6 +215,7 @@ IFX_INTERRUPT(uart1_tx_isr, UART1_INT_VECTAB_NUM, UART1_TX_INT_PRIO)
 IFX_INTERRUPT(uart1_rx_isr, UART1_INT_VECTAB_NUM, UART1_RX_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
+    uart_control_callback(UART_1); // 无刷驱动串口回调函数
     // camera_uart_handler();       // 摄像头参数配置统一回调函数
     // wireless_module_uart_handler();  // 无线模块统一回调函数
 }
@@ -228,7 +230,6 @@ IFX_INTERRUPT(uart2_rx_isr, UART2_INT_VECTAB_NUM, UART2_RX_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     // wireless_module_uart_handler();
-    receiver_callback();
 }
 // 串口3默认连接到GPS定位模块
 IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO)
@@ -240,7 +241,7 @@ IFX_INTERRUPT(uart3_rx_isr, UART3_INT_VECTAB_NUM, UART3_RX_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     // gnss_uart_callback();        // GNSS串口回调函数
-    uart_control_callback(UART_3); // 无刷驱动串口回调函数
+    receiver_callback();
 }
 
 IFX_INTERRUPT(uart4_tx_isr, UART4_INT_VECTAB_NUM, UART4_TX_INT_PRIO)

@@ -276,7 +276,7 @@ static void mt9v03x_vsync_handler(void)
         mt9v03x_link_list_num = dma_init(
             MT9V03X_DMA_CH, MT9V03X_DATA_ADD, mt9v03x_image[0],
             MT9V03X_PCLK_PIN, EXTI_TRIGGER_FALLING, MT9V03X_IMAGE_SIZE,
-            DMA_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
+            DMA_1_INT_PRIO); // 如果超频到300M 倒数第二个参数请设置为FALLING
         dma_enable(MT9V03X_DMA_CH);
     }
     else

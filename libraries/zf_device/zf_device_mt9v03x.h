@@ -57,20 +57,15 @@
 
 //================================================定义 MT9V03X
 // 基本配置================================================
-#define MT9V03X_COF_UART (UART_1) // 配置摄像头所使用到的串口
-#define MT9V03X_COF_BAUR (9600)   // 总钻风配置串口波特率
-#define MT9V03X_COF_UART_TX \
-    (UART1_RX_P20_9) // 总钻风 UART-TX 引脚 要接在单片机 RX 上
-#define MT9V03X_COF_UART_RX \
-    (UART1_TX_P33_13) // 总钻风 UART-RX 引脚 要接在单片机 TX 上
+#define MT9V03X_COF_UART (CAMERA1_COF_UART) // 配置摄像头所使用到的串口
+#define MT9V03X_COF_BAUR (CAMERA1_COF_BAUD)   // 总钻风配置串口波特率
+#define MT9V03X_COF_UART_TX (CAMERA1_COF_UART_TX) // 总钻风 UART-TX 引脚 要接在单片机 RX 上
+#define MT9V03X_COF_UART_RX (CAMERA1_COF_UART_RX) // 总钻风 UART-RX 引脚 要接在单片机 TX 上
 
 #define MT9V03X_COF_IIC_DELAY (800) // 总钻风 IIC 延时
 
 #define MT9V03X_COF_IIC_SCL CAMERA1_COF_IIC_SCL // 总钻风 IIC-SCL 引脚
 #define MT9V03X_COF_IIC_SDA CAMERA1_COF_IIC_SDA // 总钻风 IIC-SDA 引脚
-
-// #define MT9V03X_COF_IIC_SCL (P10_8)  // 总钻风 IIC-SCL 引脚
-// #define MT9V03X_COF_IIC_SDA (P10_7)  // 总钻风 IIC-SDA 引脚
 
 #define MT9V03X_DMA_CH CAMERA1_DMA_CH
 

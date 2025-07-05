@@ -5,8 +5,8 @@ uint32 bottom_motor_deadzone_backword = 430;
 uint32 bottom_motor_deadzone_forward = 240;
 void motor_init()
 {
-    gpio_init(P22_3, GPO, 1, GPO_PUSH_PULL);
-    gpio_set_level(P22_3, 1);
+    gpio_init(ENABLE_BOTTOM, GPO, 1, GPO_PUSH_PULL);
+    gpio_set_level(ENABLE_BOTTOM, 1);
 
     pwm_init(MOTOR_BOTTOM, MOTOR_HZ, 0);
     gpio_init(DIR_BOTTOM, GPO, 1, GPO_PUSH_PULL);

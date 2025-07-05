@@ -138,7 +138,7 @@ uint8 dma_init(IfxDma_ChannelId dma_ch,
     cfg.channelInterruptEnabled = TRUE;
     cfg.channelInterruptPriority = isr_prio;
 
-    cfg.channelInterruptTypeOfService = DMA_INT_SERVICE;
+    cfg.channelInterruptTypeOfService = DMA_1_INT_SERVICE;
 
     cfg.destinationAddress =
         IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), destination_addr);
@@ -255,7 +255,7 @@ uint8 dma_init_2(IfxDma_ChannelId dma_ch,
     cfg.channelInterruptEnabled = TRUE;
     cfg.channelInterruptPriority = isr_prio;
 
-    cfg.channelInterruptTypeOfService = DMA_INT_SERVICE_2;
+    cfg.channelInterruptTypeOfService = DMA_2_INT_SERVICE;
 
     cfg.destinationAddress =
         IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), destination_addr);
